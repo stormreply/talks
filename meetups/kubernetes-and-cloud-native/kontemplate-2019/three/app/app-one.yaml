@@ -1,0 +1,20 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: meetupapp
+spec:
+  replicas: 1
+  strategy:
+    type: {{ .releaseStrategy }}
+  template:
+    metadata:
+      labels:
+        app: meetupapp
+        environment: {{ .environment }}
+    spec:
+      containers:
+        - image: k8s.gcr.io/nginx:{{ .version }}
+          name: nginx
+          ports:
+          - containerPort: {{ .apiPort }}

@@ -1,0 +1,12 @@
+---
+# you can different context for different cluster or roles
+context: arn:aws:eks:eu-central-1:<ACCOUNTID>:cluster/kontemplate-cluster
+include:
+  # By default resource sets are included from a folder with the same
+  # name as the resource set's name
+  - name: app
+    values:
+      version: 1.7.9
+      environment: prod
+      apiPort: 80
+      releaseStrategy: RollingUpdate

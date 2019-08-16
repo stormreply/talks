@@ -1,0 +1,25 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: meetupapp
+spec:
+  replicas: 1
+  strategy:
+    type: {{ .releaseStrategy }}
+  template:
+    metadata:
+      labels:
+        # will be replaced by "SMALLLETTERS"
+        app: {{ .name | upper }}
+        # will be replaces by "smallletterssmallletterssmallletters"
+        app-two: {{ .name | repeat 3 }}
+        # will be replaced by "hi-Kubernauts" as long as hasPermission is equal to true
+        permission: {{if .hasPermission -}} hi-Kubernauts {{- end}}
+        environment: {{ .environment }}
+    spec:
+      containers:
+        - image: k8s.gcr.io/nginx:{{ .version }}
+          name: nginx
+          ports:
+          - containerPort: {{ .apiPort }}

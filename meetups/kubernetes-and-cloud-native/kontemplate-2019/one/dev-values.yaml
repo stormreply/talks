@@ -1,0 +1,13 @@
+---
+context: docker-desktop
+include:
+  # By default resource sets are included from a folder with the same
+  # name as the resource set's name
+  - name: app
+    values:
+     # The values will be replaced by their counterpart which looks like
+    # {{ .version }}
+      version: 1.17.2 # invalid version, just a show case
+      environment: dev
+      apiPort: 90
+      releaseStrategy: Recreate

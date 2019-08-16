@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+  labels:
+    app: meetupapp-db
+spec:
+  ports:
+    - port: {{ .servicePort }}
+  selector:
+    app: meetupapp-db
+    tier: postgreSQL
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-claim
+  labels:
+    app: meetupapp-db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .storage }}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: postgresql
+  labels:
+    app: meetupapp-db
+spec:
+  strategy:
+    type: {{ .releaseStrategy }}
+  template:
+    metadata:
+      labels:
+        app: meetupapp-db
+        tier: postgreSQL
+    spec:
+      containers:
+        - image: postgres:{{ .dbImage }}
+          name: postgresql
+          env:
+            - name: POSTGRES_USER
+              value: {{ .pgUser }}
+            - name: POSTGRES_DB
+              value: {{ .pgDB }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .pgPw }}
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          volumeMounts:
+            - name: postgresql
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgresql
+          persistentVolumeClaim:
+            claimName: postgres-claim
